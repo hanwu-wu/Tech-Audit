@@ -1,0 +1,57 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 10px;
+  overflow-x: hidden;
+}
+.question {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+.question label {
+  flex-grow: 1;
+  margin-right: 10px;
+  min-width: 0;
+  max-width: 60%;
+}
+.options {
+  display: flex;
+  gap: 20px; /* 增加間距，避免重疊 */
+  width: 150px; /* 略增寬度以容納間距 */
+  justify-content: flex-start;
+  align-items: center;
+}
+.options label {
+  margin-left: 5px; /* 增加標籤與按鈕的間距 */
+  width: 35px; /* 增加標籤寬度 */
+  text-align: left; /* 改為左對齊，避免文字擠壓 */
+}
+input[type="radio"] {
+  margin: 0;
+  flex-shrink: 0; /* 防止按鈕被壓縮 */
+}
+input[type="file"] {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  clear: both;
+}
+button {
+  width: 48%;
+  padding: 10px;
+  margin: 1%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+.hidden {
+  display: none;
+}
