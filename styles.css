@@ -1,0 +1,70 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 10px;
+  overflow-x: hidden;
+}
+.question {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.question-label {
+  flex-grow: 1;
+  margin-right: 15px;
+  min-width: 0;
+  max-width: 35%;
+  display: flex;
+  flex-direction: column; /* 垂直排列題目和附加資訊 */
+}
+.question-label .main-text {
+  font-weight: bold; /* 主題目加粗 */
+}
+.question-label .sub-text {
+  font-size: 0.9em; /* 附加資訊稍小 */
+  color: #556; /* 附加資訊使用較淺的顏色 */
+}
+.options {
+  display: flex;
+  width: 150px;
+  justify-content: flex-start;
+  align-items: center;
+margin-left: -10px; /* 向左移動 10px */
+}
+select {
+  width: 150%;
+  padding: 10px;
+  font-size: 15px;
+}
+select.unanswered {
+  background-color: #ffcccc;
+}
+input[type="file"] {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  clear: both;
+}
+button {
+  width: 48%;
+  padding: 10px;
+  margin: 1%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+.hidden {
+  display: none;
+}
+#categories {
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 1.5;
+}
