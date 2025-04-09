@@ -151,7 +151,7 @@ function exportPDF() {
     doc.save(fileName);
 
     // 顯示提示視窗
-    alert("請將檔案郵件附件給海技 PIC");
+    alert("請將檔案郵件附件給海技 專案負責人");
   }).catch((error) => {
     console.error("Error generating PDF:", error);
     alert("匯出 PDF 時發生錯誤，請檢查控制台！");
