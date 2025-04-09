@@ -1,127 +1,159 @@
+// 頁面切換功能
 function startAudit() {
-  document.getElementById("page1").classList.add("hidden");
-  document.getElementById("page2").classList.remove("hidden");
+  const page1 = document.getElementById("page1");
+  const page2 = document.getElementById("page2");
+  page1.classList.add("hidden");
+  page2.classList.remove("hidden");
 }
 
+// 匯出 Excel 功能
 function exportExcel() {
-  try {
-    if (typeof XLSX === "undefined") throw new Error("SheetJS not loaded");
+  // 收集基本資訊
+  const vesselName = document.getElementById("vesselName").value;
+  const port = document.getElementById("port").value;
+  const pic = document.getElementById("pic").value;
+  const auditDate = document.getElementById("auditDate").value;
 
-    const vesselName = document.getElementById("vesselName").value || "Unknown Vessel";
-    const port = document.getElementById("port").value || "Unknown Port";
-    const pic = document.getElementById("pic").value || "Unknown PIC";
-    const auditDate = document.getElementById("auditDate").value || "Unknown Date";
-    const fileName = `${auditDate}_${vesselName}_${pic}_Report`;
+  // 準備 Excel 資料
+  const excelData = [];
 
-    const data = [
-      ["Vessel Name", vesselName],
-      ["Port", port],
-      ["PIC", pic],
-      ["Date", auditDate],
-      [], // 空行
-      ["題號", "問題", "答案", "照片路徑"], // 新增 "題號" 欄
-    ];
-    questions.forEach((q, i) => {
-      const select = document.getElementById(q.id);
-      const answer = select.value || "N/A";
-      const photoInput = document.getElementById(`photo${i + 1}`);
-      const photoName = photoInput.files[0] ? photoInput.files[0].name : "無照片";
-      const questionNumber = i + 1; // 題號從 1 開始
-      data.push([questionNumber, q.text, answer, photoName]); // 在第一欄添加題號
-    });
+  // 添加基本資訊（從第 2 行開始）
+  excelData.push(["", ""]); // 第 1 行為空
+  excelData.push(["", "Vessel Name", vesselName]); // 第 2 行
+  excelData.push(["", "Port", port]); // 第 3 行
+  excelData.push(["", "Date", auditDate]); // 第 4 行
+  excelData.push(["", "PIC", pic]); // 第 5 行（新增 PIC）
+  excelData.push(["", "Question", "Answer", "Photo"]); // 第 6 行（表頭）
+  excelData.push(["", ""]); // 第 7 行為空行
 
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Audit Result");
-    XLSX.writeFile(wb, `${fileName}.xlsx`);
+  // 收集問題答案（從第 8 行開始）
+  questions.forEach((q, index) => {
+    const questionNumber = index + 1;
+    const parts = q.text.split("/");
+    const mainText = parts[0].trim();
+    const subText = parts.length > 1 ? "/" + parts.slice(1).join("/").trim() : "";
+    const answer = document.getElementById(q.id).value;
+    const photoInput = document.getElementById("photo" + q.id.slice(1));
+    const photoFile = photoInput.files.length > 0 ? photoInput.files[0].name : "No photo";
 
-  } catch (error) {
-    console.error("Excel export failed:", error);
-    alert("Excel export error: " + error.message);
-  }
+    // 格式化問題文字（只包含編號和題目文字）
+    const questionText = `${questionNumber}-${mainText} ${subText}`;
+
+    // 添加問題資料
+    excelData.push(["", questionText, answer || "Not answered", photoFile]);
+  });
+
+  // 使用 xlsx 匯出 Excel
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+  // 設置欄寬
+  ws["!cols"] = [
+    { wch: 5 },  // A 欄（空）
+    { wch: 50 }, // B 欄（問題）
+    { wch: 15 }, // C 欄（答案）
+    { wch: 30 }  // D 欄（照片）
+  ];
+
+  // 添加工作表到工作簿
+  XLSX.utils.book_append_sheet(wb, ws, "Audit Report");
+
+  // 生成檔案名稱：date_vessel name_port_pic_report.xlsx
+  const fileName = `${auditDate}_${vesselName}_${port}_${pic}_report.xlsx`;
+
+  // 保存 Excel 檔案
+  XLSX.writeFile(wb, fileName);
+
+  // 顯示提示視窗
+  alert("請將檔案郵件附件給海技 PIC");
 }
 
+// 匯出 PDF 功能（包含基本資訊和照片）
 function exportPDF() {
-  try {
-    if (typeof jspdf === "undefined") throw new Error("jsPDF not loaded");
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let yOffset = 10;
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+  // 收集基本資訊
+  const vesselName = document.getElementById("vesselName").value;
+  const port = document.getElementById("port").value;
+  const pic = document.getElementById("pic").value;
+  const auditDate = document.getElementById("auditDate").value;
 
-    const vesselName = document.getElementById("vesselName").value || "Unknown Vessel";
-    const port = document.getElementById("port").value || "Unknown Port";
-    const pic = document.getElementById("pic").value || "Unknown PIC";
-    const auditDate = document.getElementById("auditDate").value || "Unknown Date";
-    const fileName = `${auditDate}_${vesselName}_${pic}_Report`;
+  // 添加基本資訊
+  doc.setFontSize(16);
+  doc.text("Audit Photos", 10, yOffset);
+  yOffset += 10;
 
-    let y = 10;
-    doc.text(`Vessel Name: ${vesselName}`, 10, y);
-    y += 10;
-    doc.text(`Port: ${port}`, 10, y);
-    y += 10;
-    doc.text(`PIC: ${pic}`, 10, y);
-    y += 10;
-    doc.text(`Date: ${auditDate}`, 10, y);
-    y += 15;
+  doc.setFontSize(12);
+  doc.text(`Vessel Name: ${vesselName}`, 10, yOffset);
+  yOffset += 10;
+  doc.text(`Date: ${auditDate}`, 10, yOffset);
+  yOffset += 10;
+  doc.text(`PIC: ${pic}`, 10, yOffset);
+  yOffset += 10;
+  doc.text(`Port: ${port}`, 10, yOffset);
+  yOffset += 15; // 留出一些間距
 
-    const content = [];
-    const promises = [];
-    questions.forEach((q, i) => {
-      const photoInput = document.getElementById(`photo${i + 1}`);
-      const photo = photoInput.files[0];
+  // 遍歷問題，檢查是否有照片
+  const promises = [];
+  questions.forEach((q, index) => {
+    const photoInput = document.getElementById("photo" + q.id.slice(1));
+    if (photoInput.files.length > 0) {
+      const file = photoInput.files[0];
+      const promise = new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imgData = e.target.result;
+          resolve({ questionNumber: index + 1, imgData });
+        };
+        reader.readAsDataURL(file);
+      });
+      promises.push(promise);
+    }
+  });
 
-      if (photo) {
-        content.push({ id: q.id });
-        promises.push(
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              const img = new Image();
-              img.src = reader.result;
-              img.onload = () => resolve({ index: i + 1, imgData: reader.result });
-              img.onerror = () => reject(new Error(`Image ${i + 1} load failed`));
-            };
-            reader.onerror = () => reject(new Error(`Image ${i + 1} read failed`));
-            reader.readAsDataURL(photo);
-          })
-        );
+  // 等待所有照片載入完成
+  Promise.all(promises).then((results) => {
+    results.forEach((result, idx) => {
+      if (yOffset > 280) { // 如果當前頁面已滿，新增一頁
+        doc.addPage();
+        yOffset = 10;
+      }
+
+      // 添加題目編號
+      doc.setFontSize(12);
+      doc.text(`Question ${result.questionNumber}`, 10, yOffset);
+      yOffset += 10;
+
+      // 添加照片
+      try {
+        doc.addImage(result.imgData, "JPEG", 10, yOffset, 64, 36); // 調整照片大小
+        yOffset += 80; // 為下一張照片留出空間
+      } catch (error) {
+        console.error(`Error adding image for Question ${result.questionNumber}:`, error);
+        doc.text(`Error loading image for Question ${result.questionNumber}`, 10, yOffset);
+        yOffset += 10;
+      }
+
+      // 如果不是最後一張照片，添加分隔線
+      if (idx < results.length - 1) {
+        doc.setLineWidth(0.5);
+        doc.line(10, yOffset, 200, yOffset);
+        yOffset += 5;
       }
     });
 
-    if (content.length === 0) {
-      alert("No photos uploaded. PDF export skipped.");
-      return;
-    }
+    // 生成檔案名稱：date_vessel name_port_pic_report.pdf
+    const fileName = `${auditDate}_${vesselName}_${port}_${pic}_report.pdf`;
 
-    Promise.all(promises).then((images) => {
-      images.forEach((img, idx) => {
-        const item = content[idx];
-        const text = `Question: ${item.id}`;
-        doc.text(text, 10, y);
-        y += 10;
+    // 保存 PDF
+    doc.save(fileName);
 
-        try {
-          doc.addImage(img.imgData, "JPEG", 10, y, 50, 50);
-          y += 55;
-        } catch (e) {
-          console.error(`Image ${item.id} failed to add:`, e);
-          doc.text(`Failed to load image for ${item.id}`, 10, y);
-          y += 10;
-        }
-
-        if (y > 250) {
-          doc.addPage();
-          y = 10;
-        }
-      });
-      doc.save(`${fileName}_Photos.pdf`);
-    }).catch((error) => {
-      console.error("PDF image processing failed:", error);
-      alert("PDF image processing error: " + error.message);
-    });
-
-  } catch (error) {
-    console.error("PDF export failed:", error);
-    alert("PDF export error: " + error.message);
-  }
+    // 顯示提示視窗
+    alert("請將檔案郵件附件給海技 PIC");
+  }).catch((error) => {
+    console.error("Error generating PDF:", error);
+    alert("匯出 PDF 時發生錯誤，請檢查控制台！");
+  });
 }
