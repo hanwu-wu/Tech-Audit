@@ -64,10 +64,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const auditForm = document.getElementById("auditForm");
   questions.forEach((q, index) => {
     const questionNumber = index + 1;
+    // 拆分題目文字
+    const parts = q.text.split("/");
+    let mainText = parts[0].trim(); // 主題目，例如 "A-載重線標誌清晰"
+    let subText = parts.length > 1 ? "/" + parts.slice(1).join("/").trim() : ""; // 附加資訊，例如 "/ A13/ CNSKU/ PSC"
+
     const div = document.createElement("div");
     div.className = "question";
     div.innerHTML = `
-      <label>${questionNumber}-${q.text}</label>
+      <div class="question-label">
+        <span class="main-text">${questionNumber}-${mainText}</span>
+        ${subText ? `<span class="sub-text">${subText}</span>` : ""}
+      </div>
       <div class="options">
         <select name="${q.id}" id="${q.id}">
           <option value="" disabled selected>Please Select</option>
