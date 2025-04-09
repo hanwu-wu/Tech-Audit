@@ -1,0 +1,60 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 10px;
+  overflow-x: hidden;
+}
+.question {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+.question label {
+  flex-grow: 1;
+  margin-right: 10px;
+  min-width: 0;
+  max-width: 60%;
+}
+.options {
+  display: flex;
+  width: 150px;
+  justify-content: flex-start;
+  align-items: center;
+}
+select {
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+}
+select.unanswered {
+  background-color: #ffcccc; /* 未作答時的紅色背景 */
+}
+input[type="file"] {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  clear: both;
+}
+button {
+  width: 48%;
+  padding: 10px;
+  margin: 1%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+.hidden {
+  display: none;
+}
+#categories {
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 1.5;
+}
