@@ -5,6 +5,24 @@ body {
   padding: 10px;
   overflow-x: hidden;
 }
+
+#page2 {
+  padding-top: 60px; /* 為固定分類預留空間，避免內容被遮蓋 */
+}
+
+#categories {
+  position: fixed; /* 固定在頁面頂部 */
+  top: 0; /* 距離頂部 0 */
+  left: 0; /* 靠左對齊 */
+  width: 100%; /* 寬度占滿 */
+  background-color:#a1deff; /* 白色背景，避免透明 */
+  padding: 10px; /* 內邊距 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加陰影效果 */
+  z-index: 1000; /* 確保在其他內容上方 */
+  font-size: 18px; /* 保持字形大小 */
+  line-height: 1.5; /* 行距 */
+}
+
 .question {
   display: flex;
   flex-wrap: wrap;
@@ -12,6 +30,8 @@ body {
   margin-bottom: 15px;
   width: 100%;
 }
+
+/* 其他樣式保持不變 */
 .question-label {
   flex-grow: 1;
   margin-right: 5px;
@@ -21,9 +41,9 @@ body {
   flex-direction: column;
 }
 .question-label.highlight {
-  background-color: #f2d200; /* 反黃效果 */
-  padding: 5px; /* 添加一點內邊距，讓背景色更明顯 */
-  border-radius: 3px; /* 圓角效果 */
+  background-color: #f2d200;
+  padding: 5px;
+  border-radius: 3px;
 }
 .question-label .main-text {
   font-weight: bold;
@@ -66,9 +86,4 @@ button:hover {
 }
 .hidden {
   display: none;
-}
-#categories {
-  margin-bottom: 15px;
-  font-size: 18px; /* 調整字形大小，從 14px 改為 18px */
-  line-height: 1.5;
 }
